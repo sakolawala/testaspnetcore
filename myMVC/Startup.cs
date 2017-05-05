@@ -52,7 +52,7 @@ namespace myMVC
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
-                   name: "default",
+                   name: "defaultapi",
                    template: "api/{controller}/{id?}",
                    defaults: new { controller = "perfAPI" } );
 
