@@ -1,68 +1,57 @@
-#tool nuget:?package=NUnit.ConsoleRunner&version=3.4.0
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 //////////////////////////////////////////////////////////////////////
-
 var target = Argument("target", "Default");
-var configuration = Argument("configuration", "Release");
-
+var configuration = Argument("configuration", "Debug");
+ 
 //////////////////////////////////////////////////////////////////////
-// PREPARATION
-//////////////////////////////////////////////////////////////////////
-
-// Define directories.
-var buildDir = Directory("./src/Example/bin") + Directory(configuration);
-
+///    Build Variables
+/////////////////////////////////////////////////////////////////////
+// The output directory the build artefacts saved too
+var outputDir = Directory("./mvMVC/bin") + Directory(configuration);  
+var slnFile = "./myMVC.sln";
+var buildSettings = new DotNetCoreBuildSettings
+     {
+         Framework = "netcoreapp1.1",
+         Configuration = configuration,
+         OutputDirectory = outputDir
+     };
 //////////////////////////////////////////////////////////////////////
 // TASKS
 //////////////////////////////////////////////////////////////////////
-
 Task("Clean")
-    .Does(() =>
-{
-    CleanDirectory(buildDir);
-});
+  .Does( () => {
+    Information("OutDirectory: {0}", outputDir);
+    if (DirectoryExists(outputDir))
+    {
+        DeleteDirectory(outputDir, recursive:true);
+    }
+  });
 
-Task("Restore-NuGet-Packages")
-    .IsDependentOn("Clean")
-    .Does(() =>
-{
-    NuGetRestore("./src/Example.sln");
-});
+Task("Restore")
+  .IsDependentOn("Clean")
+  .Does(() => {
+        DotNetCoreRestore();
+  });
 
 Task("Build")
-    .IsDependentOn("Restore-NuGet-Packages")
-    .Does(() =>
-{
-    if(IsRunningOnWindows())
-    {
-      // Use MSBuild
-      MSBuild("./src/Example.sln", settings =>
-        settings.SetConfiguration(configuration));
-    }
-    else
-    {
-      // Use XBuild
-      XBuild("./src/Example.sln", settings =>
-        settings.SetConfiguration(configuration));
-    }
-});
+  .IsDependentOn("Restore")
+  .Does(() => {
+        DotNetCoreBuild(slnFile);
+  });
 
-Task("Run-Unit-Tests")
+  Task("Run Tests")
     .IsDependentOn("Build")
-    .Does(() =>
-{
-    NUnit3("./src/**/bin/" + configuration + "/*.Tests.dll", new NUnit3Settings {
-        NoResults = true
-        });
-});
+    .Does( () => {
+
+    });
 
 //////////////////////////////////////////////////////////////////////
 // TASK TARGETS
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("Run-Unit-Tests");
+    .IsDependentOn("Build");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION
