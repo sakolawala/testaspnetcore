@@ -48,6 +48,4 @@ namespace myMVC.Controllers
         //{
         //}
     }
-
-    //Release 3.0 : Feature 4 test comment
 }

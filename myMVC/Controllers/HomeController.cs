@@ -31,11 +31,5 @@ namespace myMVC.Controllers
         {
             return View();
         }
-
-        //Testing Jenkins - Test comment to fire a build
-        //Another comment to fire the build
-        //Another comment to test release 2.0
-
-        //Master feature 3.0 commit
     }
 }
