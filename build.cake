@@ -32,16 +32,14 @@ Task("Clean")
   });
 
 Task("AppendBuildVersion")
+  .IsDependentOn("Clean")
   .Does( () => {
       Information("Changing Assembly Version of myMVC: {0}", projFile);
       UpdateBuildNumber(projFile, "15");
-     
-      
-      
   });
 
 Task("Restore")
-  .IsDependentOn("Clean")
+  .IsDependentOn("AppendBuildVersion")
   .Does(() => {
         DotNetCoreRestore();
   });
@@ -63,7 +61,7 @@ Task("Build")
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("AppendBuildVersion");
+    .IsDependentOn("Run Tests");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION
