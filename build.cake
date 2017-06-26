@@ -1,3 +1,4 @@
+#r "tools/UpdateCSProjVersion.dll"
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 //////////////////////////////////////////////////////////////////////
@@ -8,8 +9,10 @@ var configuration = Argument("configuration", "Debug");
 ///    Build Variables
 /////////////////////////////////////////////////////////////////////
 // The output directory the build artefacts saved too
+//////////////////////////////////////////////////////////////////////
 var outputDir = Directory("./mvMVC/bin") + Directory(configuration);  
 var slnFile = "./myMVC.sln";
+var projFile = "./myMVC/myMVC.csproj";
 var buildSettings = new DotNetCoreBuildSettings
      {
          Framework = "netcoreapp1.1",
@@ -26,6 +29,15 @@ Task("Clean")
     {
         DeleteDirectory(outputDir, recursive:true);
     }
+  });
+
+Task("AppendBuildVersion")
+  .Does( () => {
+      Information("Changing Assembly Version of myMVC: {0}", projFile);
+      UpdateBuildNumber(projFile, "15");
+     
+      
+      
   });
 
 Task("Restore")
@@ -51,7 +63,7 @@ Task("Build")
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("Build");
+    .IsDependentOn("AppendBuildVersion");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION
